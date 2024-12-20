@@ -3,148 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Win98-like OS with XP.css and OS.js</title>
-    <link rel="stylesheet" href="https://unpkg.com/xp.css">
-    <style>
-        body {
-            background-color: #008080;
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-            padding: 0;
-        }
-
-        .taskbar {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: #C0C0C0;
-            color: black;
-            display: flex;
-            justify-content: space-between;
-            padding: 5px;
-        }
-
-        .start-button {
-            background-color: #000080;
-            color: white;
-            border: 2px solid #000080;
-            padding: 3px 10px;
-            cursor: pointer;
-        }
-
-        .start-button:hover {
-            background-color: #0000A0;
-        }
-
-        .window {
-            width: 300px;
-            height: 200px;
-            background-color: #C0C0C0;
-            border: 2px solid #000000;
-            position: absolute;
-            top: 50px;
-            left: 50px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-            display: none;
-            z-index: 10;
-        }
-
-        .window-header {
-            background-color: #000080;
-            color: white;
-            padding: 5px;
-            cursor: move;
-            user-select: none;
-        }
-
-        .window-content {
-            padding: 10px;
-            background-color: #FFFFFF;
-            height: calc(100% - 30px); /* Adjust for header height */
-            overflow-y: auto;
-        }
-
-        .window-header .close-btn {
-            background-color: #800000;
-            color: white;
-            border: none;
-            float: right;
-            cursor: pointer;
-        }
-
-        .window-header .close-btn:hover {
-            background-color: #A00000;
-        }
-    </style>
+    <title>RetroOS</title>
+    <!-- 98.css for retro Windows 98 style -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/98.css@1.0.0/dist/98.css">
+    <!-- xp.css for XP-style theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xp.css@1.0.0/dist/xp.css">
+    <!-- React and ReactDOM CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/react@17.0.2/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
+    <!-- Babel CDN for JSX support -->
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.16.5/babel.min.js"></script>
+    <!-- OS.js CDN for OS-like functionality (optional, can be removed if not needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/@osjs/client@3.0.0/dist/main.js"></script>
 </head>
 <body>
+    <div id="root"></div>
 
-    <!-- Taskbar -->
-    <div class="taskbar">
-        <button class="start-button" onclick="openWindow()">Start</button>
-        <span class="taskbar-text">Win98 OS</span>
-    </div>
-
-    <!-- Window -->
-    <div class="window" id="window">
-        <div class="window-header">
-            <span>My Window</span>
-            <button class="close-btn" onclick="closeWindow()">X</button>
-        </div>
-        <div class="window-content">
-            <p>Welcome to the Win98-like OS interface!</p>
-            <p>This is a simple window, designed using HTML, CSS, and JavaScript.</p>
-        </div>
-    </div>
-
-    <script>
-        let isDragging = false;
-        let offsetX, offsetY;
-
-        // Function to open the window
-        function openWindow() {
-            document.getElementById('window').style.display = 'block';
+    <script type="text/babel">
+        // React component for Start Menu
+        function StartMenu() {
+            return (
+                <div className="start-menu">
+                    <button className="start-button">Start</button>
+                    <ul className="start-menu-items">
+                        <li>Programs</li>
+                        <li>Documents</li>
+                        <li>Settings</li>
+                        <li>Find</li>
+                        <li>Help</li>
+                        <li>Run...</li>
+                        <li>Shut Down...</li>
+                    </ul>
+                </div>
+            );
         }
 
-        // Function to close the window
-        function closeWindow() {
-            document.getElementById('window').style.display = 'none';
+        // Taskbar component to hold system tray, start button, etc.
+        function Taskbar() {
+            return (
+                <div className="taskbar">
+                    <StartMenu />
+                    <div className="system-tray">
+                        <span>Clock: 12:00</span>
+                    </div>
+                </div>
+            );
         }
 
-        // Making the window draggable
-        const windowElement = document.getElementById('window');
-        const header = windowElement.querySelector('.window-header');
+        // Main desktop window component with taskbar and a basic app window
+        function Desktop() {
+            return (
+                <div className="desktop">
+                    <Taskbar />
+                    <div className="window">
+                        <div className="window-header">My Application</div>
+                        <div className="window-content">
+                            <p>Welcome to RetroOS!</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
 
-        header.addEventListener('mousedown', function(e) {
-            isDragging = true;
-            offsetX = e.clientX - windowElement.offsetLeft;
-            offsetY = e.clientY - windowElement.offsetTop;
-        });
-
-        document.addEventListener('mousemove', function(e) {
-            if (isDragging) {
-                windowElement.style.left = (e.clientX - offsetX) + 'px';
-                windowElement.style.top = (e.clientY - offsetY) + 'px';
-            }
-        });
-
-        document.addEventListener('mouseup', function() {
-            isDragging = false;
-        });
+        // Render the entire OS layout
+        ReactDOM.render(<Desktop />, document.getElementById('root'));
     </script>
-
-    <!-- OS.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@osjs/client/dist/main.js"></script>
-    <script>
-        // Initialize OS.js
-        const osjs = new OSjs.Core();
-        osjs.init().then(() => {
-            // OS.js is ready
-            console.log('OS.js initialized');
-        }).catch((err) => {
-            console.error('OS.js initialization failed:', err);
-        });
-    </script>
-
 </body>
 </html>
